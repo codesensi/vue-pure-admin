@@ -38,7 +38,7 @@ defineOptions({
 });
 
 const imgCode = ref("");
-const loginDay = ref(7);
+const loginDay = ref(30);
 const router = useRouter();
 const loading = ref(false);
 const checked = ref(false);
@@ -58,7 +58,7 @@ const { locale, translationCh, translationEn } = useTranslationLang();
 
 const ruleForm = reactive({
   username: "admin",
-  password: "admin123",
+  password: "admin@2025",
   verifyCode: ""
 });
 
@@ -68,10 +68,7 @@ const onLogin = async (formEl: FormInstance | undefined) => {
     if (valid) {
       loading.value = true;
       useUserStoreHook()
-        .loginByUsername({
-          username: ruleForm.username,
-          password: ruleForm.password
-        })
+        .loginByUsername({ ...ruleForm })
         .then(res => {
           if (res.success) {
             // 获取后端路由
@@ -262,13 +259,13 @@ watch(loginDay, value => {
                       />
                     </span>
                   </el-checkbox>
-                  <el-button
+                  <!-- <el-button
                     link
                     type="primary"
                     @click="useUserStoreHook().SET_CURRENTPAGE(4)"
                   >
                     {{ t("login.pureForget") }}
-                  </el-button>
+                  </el-button> -->
                 </div>
                 <el-button
                   class="w-full mt-4"
@@ -283,7 +280,7 @@ watch(loginDay, value => {
               </el-form-item>
             </Motion>
 
-            <Motion :delay="300">
+            <!-- <Motion :delay="300">
               <el-form-item>
                 <div class="w-full h-[20px] flex justify-between items-center">
                   <el-button
@@ -297,10 +294,10 @@ watch(loginDay, value => {
                   </el-button>
                 </div>
               </el-form-item>
-            </Motion>
+            </Motion> -->
           </el-form>
 
-          <Motion v-if="currentPage === 0" :delay="350">
+          <!-- <Motion v-if="currentPage === 0" :delay="350">
             <el-form-item>
               <el-divider>
                 <p class="text-gray-500 text-xs">
@@ -321,7 +318,7 @@ watch(loginDay, value => {
                 </span>
               </div>
             </el-form-item>
-          </Motion>
+          </Motion> -->
           <!-- 手机号登录 -->
           <LoginPhone v-if="currentPage === 1" />
           <!-- 二维码登录 -->
@@ -333,7 +330,7 @@ watch(loginDay, value => {
         </div>
       </div>
     </div>
-    <div
+    <!-- <div
       class="w-full flex-c absolute bottom-3 text-sm text-[rgba(0,0,0,0.6)] dark:text-[rgba(220,220,242,0.8)]"
     >
       Copyright © 2020-present
@@ -344,7 +341,7 @@ watch(loginDay, value => {
       >
         &nbsp;{{ title }}
       </a>
-    </div>
+    </div> -->
   </div>
 </template>
 
