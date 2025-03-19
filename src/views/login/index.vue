@@ -70,7 +70,7 @@ const onLogin = async (formEl: FormInstance | undefined) => {
       useUserStoreHook()
         .loginByUsername({ ...ruleForm })
         .then(res => {
-          if (res.success) {
+          if (res.code === 1) {
             // 获取后端路由
             return initRouter().then(() => {
               disabled.value = true;

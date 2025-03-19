@@ -1,7 +1,8 @@
 import { http } from "@/utils/http";
+import { baseUrlApi } from "./utils";
 
 export type UserResult = {
-  success: boolean;
+  code: number;
   data: {
     /** 头像 */
     avatar: string;
@@ -12,25 +13,25 @@ export type UserResult = {
     /** 当前登录用户的角色 */
     roles: Array<string>;
     /** 按钮级别权限 */
-    permissions: Array<string>;
+    perms: Array<string>;
     /** `token` */
     accessToken: string;
     /** 用于调用刷新`accessToken`的接口时所需的`token` */
     refreshToken: string;
     /** `accessToken`的过期时间（格式'xxxx/xx/xx xx:xx:xx'） */
-    expires: Date;
+    expireTime: Date;
   };
 };
 
 export type RefreshTokenResult = {
-  success: boolean;
+  code: number;
   data: {
     /** `token` */
     accessToken: string;
     /** 用于调用刷新`accessToken`的接口时所需的`token` */
     refreshToken: string;
     /** `accessToken`的过期时间（格式'xxxx/xx/xx xx:xx:xx'） */
-    expires: Date;
+    expireTime: Date;
   };
 };
 
@@ -69,13 +70,19 @@ type ResultTable = {
 };
 
 /** 登录 */
-export const getLogin = (data?: object) => {
-  return http.request<UserResult>("post", "/login", { data });
+export const doLoginAcoount = (data?: object) => {
+  return http.request<UserResult>("post", baseUrlApi("/login/account"), {
+    data
+  });
 };
 
 /** 刷新`token` */
-export const refreshTokenApi = (data?: object) => {
-  return http.request<RefreshTokenResult>("post", "/refresh-token", { data });
+export const doTokenRefresh = (data?: object) => {
+  return http.request<RefreshTokenResult>(
+    "post",
+    baseUrlApi("/token/refresh"),
+    { data }
+  );
 };
 
 /** 账户设置-个人信息 */

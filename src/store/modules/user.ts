@@ -10,8 +10,8 @@ import {
 import {
   type UserResult,
   type RefreshTokenResult,
-  getLogin,
-  refreshTokenApi
+  doLoginAcoount,
+  doTokenRefresh
 } from "@/api/user";
 import { useMultiTagsStoreHook } from "./multiTags";
 import { type DataInfo, setToken, removeToken, userKey } from "@/utils/auth";
@@ -78,9 +78,9 @@ export const useUserStore = defineStore("pure-user", {
     /** 登入 */
     async loginByUsername(data) {
       return new Promise<UserResult>((resolve, reject) => {
-        getLogin(data)
+        doLoginAcoount(data)
           .then(data => {
-            if (data?.success) setToken(data.data);
+            if (data?.code === 1) setToken(data.data);
             resolve(data);
           })
           .catch(error => {
@@ -101,7 +101,7 @@ export const useUserStore = defineStore("pure-user", {
     /** 刷新`token` */
     async handRefreshToken(data) {
       return new Promise<RefreshTokenResult>((resolve, reject) => {
-        refreshTokenApi(data)
+        doTokenRefresh(data)
           .then(data => {
             if (data) {
               setToken(data.data);
