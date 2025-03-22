@@ -13,6 +13,7 @@ import { stringify } from "qs";
 import NProgress from "../progress";
 import { getToken, formatToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
+import { message } from "@/utils/message";
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
@@ -73,14 +74,14 @@ class PureHttp {
           return config;
         }
         /** 请求白名单，放置一些不需要`token`的接口（通过设置请求白名单，防止`token`过期后再请求造成的死循环问题） */
-        const whiteList = ["/token/refresh", "/login/account"];
+        const whiteList = ["/token/refresh", "/login/account", "/logout"];
         return whiteList.some(url => config.url.endsWith(url))
           ? config
           : new Promise(resolve => {
               const data = getToken();
               if (data) {
                 const now = new Date().getTime();
-                const expired = parseInt(data.expireTime) - now <= 0;
+                const expired = data.expires - now <= 0;
                 if (expired) {
                   if (!PureHttp.isRefreshing) {
                     PureHttp.isRefreshing = true;
@@ -88,10 +89,15 @@ class PureHttp {
                     useUserStoreHook()
                       .handRefreshToken({ refreshToken: data.refreshToken })
                       .then(res => {
-                        const token = res.data.accessToken;
-                        config.headers["Authorization"] = formatToken(token);
-                        PureHttp.requests.forEach(cb => cb(token));
-                        PureHttp.requests = [];
+                        if (res.code === 1) {
+                          const token = res.data.accessToken;
+                          config.headers["Authorization"] = formatToken(token);
+                          PureHttp.requests.forEach(cb => cb(token));
+                          PureHttp.requests = [];
+                        } else {
+                          message(res.message, { type: "error" });
+                          useUserStoreHook().logOut();
+                        }
                       })
                       .finally(() => {
                         PureHttp.isRefreshing = false;

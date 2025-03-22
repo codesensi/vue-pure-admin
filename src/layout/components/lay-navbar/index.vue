@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import { useNav } from "@/layout/hooks/useNav";
 import LaySearch from "../lay-search/index.vue";
 import LayNotice from "../lay-notice/index.vue";
@@ -7,6 +7,11 @@ import { useTranslationLang } from "@/layout/hooks/useTranslationLang";
 import LaySidebarFullScreen from "../lay-sidebar/components/SidebarFullScreen.vue";
 import LaySidebarBreadCrumb from "../lay-sidebar/components/SidebarBreadCrumb.vue";
 import LaySidebarTopCollapse from "../lay-sidebar/components/SidebarTopCollapse.vue";
+import { message } from "@/utils/message";
+import { useUserStoreHook } from "@/store/modules/user";
+import { ref } from "vue";
+import { getToken } from "@/utils/auth";
+import { addDialog } from "@/components/ReDialog";
 
 import GlobalizationIcon from "@/assets/svg/globalization.svg?component";
 import AccountSettingsIcon from "@iconify-icons/ri/user-settings-line";
@@ -17,7 +22,6 @@ import Check from "@iconify-icons/ep/check";
 const {
   layout,
   device,
-  logout,
   onPanel,
   pureApp,
   username,
@@ -30,6 +34,34 @@ const {
 } = useNav();
 
 const { t, locale, translationCh, translationEn } = useTranslationLang();
+const loading = ref(false);
+
+function onLogoutClick() {
+  addDialog({
+    title: "退出登录",
+    closeCallBack: ({ options, index, args }) => {
+      if (args?.command === "sure") {
+        onLogout();
+      }
+    },
+    // jsx 语法 （注意在.vue文件启用jsx语法，需要在script开启lang="tsx"）
+    contentRenderer: () => <h3 style="color: red;">请确认是否退出登录？</h3>
+  });
+}
+
+const onLogout = async () => {
+  loading.value = true;
+  const data = getToken();
+  useUserStoreHook()
+    .logout({
+      accessToken: data?.accessToken,
+      refreshToken: data?.refreshToken
+    })
+    .then(() => {
+      message(t("login.pureLogoutSuccess"), { type: "success" });
+    })
+    .finally(() => (loading.value = false));
+};
 </script>
 
 <template>
@@ -102,7 +134,7 @@ const { t, locale, translationCh, translationEn } = useTranslationLang();
               />
               {{ t("buttons.pureAccountSettings") }}
             </el-dropdown-item>
-            <el-dropdown-item @click="logout">
+            <el-dropdown-item @click="onLogoutClick">
               <IconifyIconOffline
                 :icon="LogoutCircleRLine"
                 style="margin: 5px"

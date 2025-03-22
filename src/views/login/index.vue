@@ -82,7 +82,7 @@ const onLogin = async (formEl: FormInstance | undefined) => {
                 .finally(() => (disabled.value = false));
             });
           } else {
-            message(t("login.pureLoginFail"), { type: "error" });
+            message(res.message, { type: "error" });
           }
         })
         .finally(() => (loading.value = false));

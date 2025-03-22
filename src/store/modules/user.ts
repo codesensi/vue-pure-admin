@@ -10,7 +10,9 @@ import {
 import {
   type UserResult,
   type RefreshTokenResult,
+  type LogoutResult,
   doLoginAcoount,
+  doLogout,
   doTokenRefresh
 } from "@/api/user";
 import { useMultiTagsStoreHook } from "./multiTags";
@@ -75,12 +77,15 @@ export const useUserStore = defineStore("pure-user", {
     SET_LOGINDAY(value: number) {
       this.loginDay = Number(value);
     },
+
     /** 登入 */
     async loginByUsername(data) {
       return new Promise<UserResult>((resolve, reject) => {
         doLoginAcoount(data)
           .then(data => {
-            if (data?.code === 1) setToken(data.data);
+            if (data.code === 1) {
+              setToken(data.data);
+            }
             resolve(data);
           })
           .catch(error => {
@@ -88,6 +93,22 @@ export const useUserStore = defineStore("pure-user", {
           });
       });
     },
+
+    async logout(data) {
+      return new Promise<LogoutResult>((resolve, reject) => {
+        doLogout(data)
+          .then(data => {
+            resolve(data);
+          })
+          .catch(error => {
+            reject(error);
+          })
+          .finally(() => {
+            useUserStoreHook().logOut();
+          });
+      });
+    },
+
     /** 前端登出（不调用接口） */
     logOut() {
       this.username = "";
@@ -98,15 +119,16 @@ export const useUserStore = defineStore("pure-user", {
       resetRouter();
       router.push("/login");
     },
+
     /** 刷新`token` */
     async handRefreshToken(data) {
       return new Promise<RefreshTokenResult>((resolve, reject) => {
         doTokenRefresh(data)
           .then(data => {
-            if (data) {
+            if (data.code === 1) {
               setToken(data.data);
-              resolve(data);
             }
+            resolve(data);
           })
           .catch(error => {
             reject(error);

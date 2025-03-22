@@ -23,7 +23,7 @@ class StorageProxy implements ProxyStorage {
       this.storage
         .setItem(k, {
           data: v,
-          expireTime: m ? new Date().getTime() + m * 60 * 1000 : 0
+          expires: m ? new Date().getTime() + m * 60 * 1000 : 0
         })
         .then(value => {
           resolve(value.data);
