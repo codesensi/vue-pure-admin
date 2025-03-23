@@ -39,13 +39,15 @@ const loading = ref(false);
 function onLogoutClick() {
   addDialog({
     title: "退出登录",
+    width: `20%`,
+    alignCenter: true,
     closeCallBack: ({ options, index, args }) => {
       if (args?.command === "sure") {
         onLogout();
       }
     },
     // jsx 语法 （注意在.vue文件启用jsx语法，需要在script开启lang="tsx"）
-    contentRenderer: () => <h3 style="color: red;">请确认是否退出登录？</h3>
+    contentRenderer: () => <h3>请确认是否退出登录？</h3>
   });
 }
 
