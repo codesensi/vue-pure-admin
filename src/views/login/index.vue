@@ -39,7 +39,7 @@ defineOptions({
 });
 
 const imgCode = ref("");
-const loginDay = ref(7);
+const loginDay = ref(30);
 const router = useRouter();
 const loading = ref(false);
 const checked = ref(false);

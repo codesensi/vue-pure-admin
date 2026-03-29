@@ -35,8 +35,8 @@ export const useUserStore = defineStore("pure-user", {
     currentPage: 0,
     // 是否勾选了登录页的免登录
     isRemembered: false,
-    // 登录页的免登录存储几天，默认7天
-    loginDay: 7
+    // 登录页的免登录存储几天，默认30天
+    loginDay: 30
   }),
   actions: {
     /** 存储头像 */
