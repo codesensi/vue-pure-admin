@@ -160,7 +160,8 @@ const frameRouter = {
   meta: {
     icon: "ri:links-fill",
     title: "menus.pureExternalPage",
-    rank: frame
+    rank: frame,
+    showLink: false
   },
   children: [
     {
@@ -283,7 +284,8 @@ const tabsRouter = {
   meta: {
     icon: "ri:bookmark-2-line",
     title: "menus.pureTabs",
-    rank: tabs
+    rank: tabs,
+    showLink: false
   },
   children: [
     {
